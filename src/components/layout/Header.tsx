@@ -10,7 +10,7 @@ export function Header() {
     <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 lg:px-8 py-4">
       {/* Desktop sidebar trigger - part of shadcn/ui/sidebar */}
       <div className="hidden lg:block">
-         <SidebarTrigger asChild>
+         <SidebarTrigger>
             <Button size="icon" variant="outline" className="h-8 w-8">
               <Menu className="h-4 w-4" />
               <span className="sr-only">Toggle Sidebar</span>
