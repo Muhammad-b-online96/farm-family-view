@@ -1,3 +1,4 @@
+
 import { Link, useLocation } from "react-router-dom";
 import {
   Sidebar,
@@ -26,7 +27,7 @@ const mainMenuItems = [
   { title: "Global Dashboard", url: "/", icon: LayoutDashboard },
   { title: "Suppliers", url: "/suppliers", icon: Truck },
   { title: "Customers", url: "/customers", icon: Users },
-  { title: "Equipment", url: "/equipment", icon: Settings }, // Placeholder icon
+  { title: "Equipment", url: "/equipment", icon: Settings }, 
   { title: "Compliance", url: "/compliance", icon: FileText },
   { title: "Calendar & Events", url: "/calendar", icon: CalendarDays },
   { title: "Tasks", url: "/tasks", icon: ListChecks },
@@ -43,7 +44,6 @@ export function AppSidebar() {
       <SidebarHeader className="p-4 border-b">
         <Link to="/" className="flex items-center gap-2">
           <Store className="h-8 w-8 text-primary" />
-          {/* Replaced SidebarTitle with a span */}
           <span className="text-xl font-semibold text-primary">BizDash</span>
         </Link>
       </SidebarHeader>
@@ -53,12 +53,11 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {mainMenuItems.map((item) => (
-                <SidebarMenuItem key={item.title} className={cn(isActive(item.url) && "bg-primary/10 text-primary")}>
-                  {/* Changed variant from "ghost" to "default" */}
+                <SidebarMenuItem key={item.title} className={cn(isActive(item.url) && "bg-sidebar-accent")}>
                   <SidebarMenuButton asChild variant="default" className="w-full justify-start">
                     <Link to={item.url} className="flex items-center gap-3">
-                      <item.icon className={cn("h-5 w-5", isActive(item.url) ? "text-primary" : "text-muted-foreground")} />
-                      <span>{item.title}</span>
+                      <item.icon className={cn("h-5 w-5", isActive(item.url) ? "text-sidebar-accent-foreground" : "text-sidebar-foreground/70")} />
+                      <span className={cn(isActive(item.url) ? "text-sidebar-accent-foreground" : "text-sidebar-foreground")}>{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -71,17 +70,20 @@ export function AppSidebar() {
           <SidebarGroupLabel className="text-xs uppercase text-muted-foreground">Businesses</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {businessItems.map((item) => (
-                <SidebarMenuItem key={item.title} className={cn(isActive(item.url) && `bg-business-${item.color.split('-')[2]}/10`)}>
-                  {/* Changed variant from "ghost" to "default" */}
-                  <SidebarMenuButton asChild variant="default" className="w-full justify-start">
-                    <Link to={item.url} className="flex items-center gap-3">
-                      <item.icon className={cn("h-5 w-5", isActive(item.url) ? item.color : "text-muted-foreground", item.color)} />
-                      <span className={cn(isActive(item.url) ? item.color : "")}>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {businessItems.map((item) => {
+                // Extract 'honey' from 'text-business-honey-DEFAULT' for background
+                const businessName = item.color.split('-')[2].toLowerCase();
+                return (
+                  <SidebarMenuItem key={item.title} className={cn(isActive(item.url) && `bg-business-${businessName}/20`)}>
+                    <SidebarMenuButton asChild variant="default" className="w-full justify-start">
+                      <Link to={item.url} className="flex items-center gap-3">
+                        <item.icon className={cn("h-5 w-5", isActive(item.url) ? item.color : "text-sidebar-foreground/70")} />
+                        <span className={cn(isActive(item.url) ? item.color : "text-sidebar-foreground")}>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

@@ -2,7 +2,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { BarChart3, FilePieChart, Download, Users, Package, DollarSign } from 'lucide-react';
+import { BarChart3, FilePieChart, Download, Users, Package, DollarSign, ShieldCheck, Truck } from 'lucide-react';
 // Assuming SalesTrendChart is a generic component we can reuse or adapt
 // import { SalesTrendChart } from "@/components/charts/SalesTrendChart"; 
 // For now, we will just use placeholder content for charts.

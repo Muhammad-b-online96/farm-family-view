@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -22,12 +21,12 @@ interface ComplianceDocument {
 
 const mockComplianceDocs: ComplianceDocument[] = [
   { id: 'doc1', documentName: 'Business Operating License', type: 'License', issueDate: '2024-01-01', expiryDate: '2025-12-31', status: 'Compliant', responsibleDept: 'Legal' },
-  { id: 'doc2', name: 'Weed Cultivation Permit #WCULT-001', type: 'Permit', issueDate: '2024-03-01', expiryDate: '2025-02-28', status: 'Upcoming Renewal', responsibleDept: 'Weed Operations', notes: 'Renewal process initiated.' },
-  { id: 'doc3', name: 'Food Safety Certification - Honey', type: 'Certification', issueDate: '2023-06-15', expiryDate: '2025-06-14', status: 'Compliant', responsibleDept: 'Honey Production' },
-  { id: 'doc4', name: 'Quarterly Fire Inspection Report', type: 'Inspection Report', issueDate: '2025-04-10', status: 'Pending Review', responsibleDept: 'Facility Management' },
-  { id: 'doc5', name: 'Fish Farm Water Discharge Permit', type: 'Permit', issueDate: '2023-02-01', expiryDate: '2025-01-31', status: 'Expired', responsibleDept: 'Fish Operations', notes: 'Renewal application overdue.'},
-  { id: 'doc6', name: 'Organic Certification - Mushrooms', type: 'Certification', issueDate: '2024-05-01', expiryDate: '2026-04-30', status: 'Compliant', responsibleDept: 'Mushroom Cultivation' },
-  { id: 'doc7', name: 'Employee Safety Training Policy', type: 'Policy', issueDate: '2024-01-15', status: 'Action Required', responsibleDept: 'HR', notes: 'Needs annual review and update.'}
+  { id: 'doc2', documentName: 'Weed Cultivation Permit #WCULT-001', type: 'Permit', issueDate: '2024-03-01', expiryDate: '2025-02-28', status: 'Upcoming Renewal', responsibleDept: 'Weed Operations', notes: 'Renewal process initiated.' },
+  { id: 'doc3', documentName: 'Food Safety Certification - Honey', type: 'Certification', issueDate: '2023-06-15', expiryDate: '2025-06-14', status: 'Compliant', responsibleDept: 'Honey Production' },
+  { id: 'doc4', documentName: 'Quarterly Fire Inspection Report', type: 'Inspection Report', issueDate: '2025-04-10', status: 'Pending Review', responsibleDept: 'Facility Management' },
+  { id: 'doc5', documentName: 'Fish Farm Water Discharge Permit', type: 'Permit', issueDate: '2023-02-01', expiryDate: '2025-01-31', status: 'Expired', responsibleDept: 'Fish Operations', notes: 'Renewal application overdue.'},
+  { id: 'doc6', documentName: 'Organic Certification - Mushrooms', type: 'Certification', issueDate: '2024-05-01', expiryDate: '2026-04-30', status: 'Compliant', responsibleDept: 'Mushroom Cultivation' },
+  { id: 'doc7', documentName: 'Employee Safety Training Policy', type: 'Policy', issueDate: '2024-01-15', status: 'Action Required', responsibleDept: 'HR', notes: 'Needs annual review and update.'}
 ];
 
 const getComplianceStatusColor = (status: ComplianceStatus) => {

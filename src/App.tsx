@@ -12,12 +12,7 @@ import WeedPage from "./pages/business/WeedPage";
 import FishPage from "./pages/business/FishPage";
 import MushroomsPage from "./pages/business/MushroomsPage";
 
-// Placeholder pages
-const PlaceholderPage = ({ title }: { title: string }) => (
-  <div className="flex items-center justify-center h-full">
-    <h1 className="text-3xl font-semibold text-muted-foreground">{title} - Coming Soon</h1>
-  </div>
-);
+// PlaceholderPage component is no longer used, so it's removed.
 
 import SuppliersPage from "./pages/SuppliersPage";
 import CustomersPage from "./pages/CustomersPage";
