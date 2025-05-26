@@ -1,4 +1,3 @@
-
 import { Link, useLocation } from "react-router-dom";
 import {
   Sidebar,
@@ -10,7 +9,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarTitle,
 } from "@/components/ui/sidebar"; // Assuming these are custom/shadcn components
 import { 
   LayoutDashboard, Home, Package, Cannabis, FishIcon, Sprout, Users, ShoppingCart, Truck, FileText, CalendarDays, ListChecks, BarChart3, Settings, LogOut, LifeBuoy, UserCircle, Store
@@ -45,7 +43,8 @@ export function AppSidebar() {
       <SidebarHeader className="p-4 border-b">
         <Link to="/" className="flex items-center gap-2">
           <Store className="h-8 w-8 text-primary" />
-          <SidebarTitle className="text-xl font-semibold text-primary">BizDash</SidebarTitle>
+          {/* Replaced SidebarTitle with a span */}
+          <span className="text-xl font-semibold text-primary">BizDash</span>
         </Link>
       </SidebarHeader>
       <SidebarContent className="p-4 space-y-6">
@@ -55,7 +54,8 @@ export function AppSidebar() {
             <SidebarMenu>
               {mainMenuItems.map((item) => (
                 <SidebarMenuItem key={item.title} className={cn(isActive(item.url) && "bg-primary/10 text-primary")}>
-                  <SidebarMenuButton asChild variant="ghost" className="w-full justify-start">
+                  {/* Changed variant from "ghost" to "default" */}
+                  <SidebarMenuButton asChild variant="default" className="w-full justify-start">
                     <Link to={item.url} className="flex items-center gap-3">
                       <item.icon className={cn("h-5 w-5", isActive(item.url) ? "text-primary" : "text-muted-foreground")} />
                       <span>{item.title}</span>
@@ -73,7 +73,8 @@ export function AppSidebar() {
             <SidebarMenu>
               {businessItems.map((item) => (
                 <SidebarMenuItem key={item.title} className={cn(isActive(item.url) && `bg-business-${item.color.split('-')[2]}/10`)}>
-                  <SidebarMenuButton asChild variant="ghost" className="w-full justify-start">
+                  {/* Changed variant from "ghost" to "default" */}
+                  <SidebarMenuButton asChild variant="default" className="w-full justify-start">
                     <Link to={item.url} className="flex items-center gap-3">
                       <item.icon className={cn("h-5 w-5", isActive(item.url) ? item.color : "text-muted-foreground", item.color)} />
                       <span className={cn(isActive(item.url) ? item.color : "")}>{item.title}</span>
