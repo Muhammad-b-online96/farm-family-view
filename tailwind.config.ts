@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -18,6 +19,9 @@ export default {
 			}
 		},
 		extend: {
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
+      },
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
@@ -61,7 +65,29 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+        business: {
+          honey: {
+            DEFAULT: 'hsl(36 92% 50%)', // amber-500
+            foreground: 'hsl(36 92% 25%)', // amber-700
+            light: 'hsl(36 92% 95%)', // amber-50
+          },
+          weed: {
+            DEFAULT: 'hsl(145 63% 40%)', // emerald-500
+            foreground: 'hsl(145 63% 20%)', // emerald-700
+            light: 'hsl(145 63% 95%)', // emerald-50
+          },
+          fish: {
+            DEFAULT: 'hsl(200 89% 53%)', // sky-500
+            foreground: 'hsl(200 89% 26%)', // sky-700
+            light: 'hsl(200 89% 95%)', // sky-50
+          },
+          mushrooms: {
+            DEFAULT: 'hsl(262 70% 58%)', // violet-500
+            foreground: 'hsl(262 70% 29%)', // violet-700
+            light: 'hsl(262 70% 95%)', // violet-50
+          }
+        }
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -84,11 +110,16 @@ export default {
 					to: {
 						height: '0'
 					}
-				}
+				},
+        'fade-in': {
+          '0%': { opacity: '0', transform: 'translateY(10px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+        'fade-in': 'fade-in 0.3s ease-out',
 			}
 		}
 	},
