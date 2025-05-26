@@ -1,18 +1,37 @@
-
+import React, { useState } from 'react';
 import { businessConfig, mockSummaryData } from "@/data/mockData";
-import { Cannabis, DollarSign, Package, BarChart, Weight } from "lucide-react"; // Added Weight
+import { Cannabis, DollarSign, Package, Weight, PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { PlusCircle } from "lucide-react";
-import { SummaryCard } from "@/components/dashboard/SummaryCard"; // Import SummaryCard
+import { SummaryCard } from "@/components/dashboard/SummaryCard";
+import { AddTransactionDialog } from "@/components/dialogs/AddTransactionDialog";
+import { AddStrainDialog } from "@/components/dialogs/AddStrainDialog";
+import { TransactionFormData, StrainFormData } from "@/components/forms/schemas";
 
 const WeedPage = () => {
   const config = businessConfig.weed;
   const data = mockSummaryData.weed;
 
-  // Add some more mock data specific to weed business
+  const [isAddSaleDialogOpen, setIsAddSaleDialogOpen] = useState(false);
+  const [isAddStrainDialogOpen, setIsAddStrainDialogOpen] = useState(false);
+
+  // Placeholder for storing transactions/strains locally if needed for display
+  // const [sales, setSales] = useState<TransactionFormData[]>([]);
+  // const [strains, setStrains] = useState<StrainFormData[]>([]);
+
+  const handleAddSaleSubmit = (formData: TransactionFormData) => {
+    console.log("New Sale Submitted:", formData);
+    // setSales(prevSales => [...prevSales, formData]);
+    // Potentially update summary data here if managing state locally
+  };
+
+  const handleAddStrainSubmit = (formData: StrainFormData) => {
+    console.log("New Strain Submitted:", formData);
+    // setStrains(prevStrains => [...prevStrains, formData]);
+  };
+
   const weedExtraData = {
-    currentStockKg: 120, // in kilograms
-    averageRating: 4.7, // out of 5
+    currentStockKg: 120,
+    averageRating: 4.7,
     activeStrains: 15,
   };
 
@@ -27,10 +46,18 @@ const WeedPage = () => {
                 <p className="text-business-weed-foreground/80">Manage your legal weed business.</p>
             </div>
             <div className="flex space-x-2 mt-4 md:mt-0">
-            <Button variant="outline" className="border-business-weed-DEFAULT text-business-weed-DEFAULT hover:bg-business-weed-DEFAULT hover:text-white">
+            <Button 
+              variant="outline" 
+              className="border-business-weed-DEFAULT text-business-weed-DEFAULT hover:bg-business-weed-DEFAULT hover:text-white"
+              onClick={() => setIsAddSaleDialogOpen(true)}
+            >
               <PlusCircle className="mr-2 h-4 w-4" /> Add Sale
             </Button>
-            <Button variant="outline" className="border-business-weed-DEFAULT text-business-weed-DEFAULT hover:bg-business-weed-DEFAULT hover:text-white">
+            <Button 
+              variant="outline" 
+              className="border-business-weed-DEFAULT text-business-weed-DEFAULT hover:bg-business-weed-DEFAULT hover:text-white"
+              onClick={() => setIsAddStrainDialogOpen(true)}
+            >
               <PlusCircle className="mr-2 h-4 w-4" /> Add Strain
             </Button>
           </div>
@@ -66,12 +93,25 @@ const WeedPage = () => {
         />
       </div>
       
-      {/* Placeholder for more detailed charts or tables */}
       <div className="flex flex-col items-center justify-center py-10 text-center bg-card rounded-lg shadow">
         <Cannabis className="w-16 h-16 mb-4 text-business-weed-DEFAULT" />
         <h2 className="text-2xl font-semibold mb-2 text-business-weed-foreground">Detailed Analytics Coming Soon</h2>
         <p className="text-md text-muted-foreground">Further breakdowns and charts for the {config.name} business will be available here.</p>
       </div>
+
+      <AddTransactionDialog
+        open={isAddSaleDialogOpen}
+        onOpenChange={setIsAddSaleDialogOpen}
+        onSubmit={handleAddSaleSubmit}
+        dialogTitle="Add New Weed Sale"
+        defaultType="income"
+      />
+
+      <AddStrainDialog
+        open={isAddStrainDialogOpen}
+        onOpenChange={setIsAddStrainDialogOpen}
+        onSubmit={handleAddStrainSubmit}
+      />
     </div>
   );
 };

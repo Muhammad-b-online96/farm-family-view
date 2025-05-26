@@ -9,7 +9,7 @@ export function DashboardLayout() {
     <SidebarProvider>
       <div className="min-h-screen w-full flex bg-muted/40">
         <AppSidebar /> {/* This sidebar is controlled by SidebarProvider */}
-        <div className="flex flex-col flex-1">
+        <div className="flex flex-col flex-1 overflow-x-hidden"> {/* Added overflow-x-hidden here */}
           <Header />
           <main className="flex-1 p-4 sm:px-6 sm:py-0 md:gap-8 animate-fade-in">
             <Outlet />
