@@ -127,7 +127,13 @@ const CalendarPage = () => {
 
       const eventData: CalendarEvent = {
         id: editingEvent ? editingEvent.id : Date.now().toString(),
-        ...data,
+        title: data.title || 'Untitled Event',
+        date: data.date,
+        time: data.time,
+        type: data.type,
+        description: data.description,
+        cost: data.cost,
+        location: data.location,
       };
 
       if (editingEvent) {
