@@ -8,10 +8,15 @@ import { PlusCircle, Settings, Wrench, Edit, Trash2 } from 'lucide-react';
 import { EquipmentItem, EquipmentStatus } from "@/data/mockData";
 import { mockApi } from "@/services/mockApi";
 import { useToast } from "@/hooks/use-toast";
+import { EquipmentDialog } from "@/components/dialogs/EquipmentDialog";
+import { EquipmentFormData } from "@/components/forms/EquipmentForm";
 
 const EquipmentPage = () => {
   const [equipment, setEquipment] = useState<EquipmentItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [editingEquipment, setEditingEquipment] = useState<EquipmentItem | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -34,6 +39,51 @@ const EquipmentPage = () => {
     }
   };
 
+  const handleAddEquipment = async (data: EquipmentFormData) => {
+    try {
+      setIsSubmitting(true);
+      await mockApi.addEquipment(data);
+      toast({
+        title: "Success",
+        description: "Equipment added successfully",
+      });
+      setDialogOpen(false);
+      loadEquipment();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to add equipment",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleEditEquipment = async (data: EquipmentFormData) => {
+    if (!editingEquipment) return;
+    
+    try {
+      setIsSubmitting(true);
+      await mockApi.updateEquipment(editingEquipment.id, data);
+      toast({
+        title: "Success",
+        description: "Equipment updated successfully",
+      });
+      setDialogOpen(false);
+      setEditingEquipment(null);
+      loadEquipment();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update equipment",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const handleDeleteEquipment = async (id: string) => {
     if (!confirm('Are you sure you want to delete this equipment?')) return;
     
@@ -53,6 +103,16 @@ const EquipmentPage = () => {
     }
   };
 
+  const openAddDialog = () => {
+    setEditingEquipment(null);
+    setDialogOpen(true);
+  };
+
+  const openEditDialog = (item: EquipmentItem) => {
+    setEditingEquipment(item);
+    setDialogOpen(true);
+  };
+
   const getEquipmentStatusColor = (status: EquipmentStatus) => {
     switch (status) {
       case 'Operational': return 'bg-green-500';
@@ -70,7 +130,7 @@ const EquipmentPage = () => {
           <Wrench className="h-8 w-8 text-primary" />
           <h1 className="text-3xl font-bold">Equipment & Assets</h1>
         </div>
-        <Button>
+        <Button onClick={openAddDialog}>
           <PlusCircle className="mr-2 h-4 w-4" /> Add New Equipment
         </Button>
       </div>
@@ -111,7 +171,7 @@ const EquipmentPage = () => {
                     <TableCell>{item.lastMaintenanceDate ? item.lastMaintenanceDate.toLocaleDateString() : 'N/A'}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end space-x-2">
-                        <Button variant="ghost" size="sm">
+                        <Button variant="ghost" size="sm" onClick={() => openEditDialog(item)}>
                           <Edit className="h-4 w-4" />
                         </Button>
                         <Button 
@@ -136,6 +196,15 @@ const EquipmentPage = () => {
           )}
         </CardContent>
       </Card>
+
+      <EquipmentDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        onSubmit={editingEquipment ? handleEditEquipment : handleAddEquipment}
+        title={editingEquipment ? "Edit Equipment" : "Add New Equipment"}
+        defaultValues={editingEquipment || undefined}
+        isLoading={isSubmitting}
+      />
     </div>
   );
 };

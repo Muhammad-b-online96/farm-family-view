@@ -8,10 +8,15 @@ import { PlusCircle, Truck, Star, Edit, Trash2 } from 'lucide-react';
 import { Supplier } from "@/data/mockData";
 import { mockApi } from "@/services/mockApi";
 import { useToast } from "@/hooks/use-toast";
+import { SupplierDialog } from "@/components/dialogs/SupplierDialog";
+import { SupplierFormData } from "@/components/forms/SupplierForm";
 
 const SuppliersPage = () => {
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
   const [loading, setLoading] = useState(true);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [editingSupplier, setEditingSupplier] = useState<Supplier | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -34,6 +39,51 @@ const SuppliersPage = () => {
     }
   };
 
+  const handleAddSupplier = async (data: SupplierFormData) => {
+    try {
+      setIsSubmitting(true);
+      await mockApi.addSupplier(data);
+      toast({
+        title: "Success",
+        description: "Supplier added successfully",
+      });
+      setDialogOpen(false);
+      loadSuppliers();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to add supplier",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleEditSupplier = async (data: SupplierFormData) => {
+    if (!editingSupplier) return;
+    
+    try {
+      setIsSubmitting(true);
+      await mockApi.updateSupplier(editingSupplier.id, data);
+      toast({
+        title: "Success",
+        description: "Supplier updated successfully",
+      });
+      setDialogOpen(false);
+      setEditingSupplier(null);
+      loadSuppliers();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update supplier",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const handleDeleteSupplier = async (id: string) => {
     if (!confirm('Are you sure you want to delete this supplier?')) return;
     
@@ -53,6 +103,16 @@ const SuppliersPage = () => {
     }
   };
 
+  const openAddDialog = () => {
+    setEditingSupplier(null);
+    setDialogOpen(true);
+  };
+
+  const openEditDialog = (supplier: Supplier) => {
+    setEditingSupplier(supplier);
+    setDialogOpen(true);
+  };
+
   const getRatingColor = (rating: number) => {
     if (rating >= 4) return 'bg-green-500';
     if (rating >= 3) return 'bg-yellow-500';
@@ -66,7 +126,7 @@ const SuppliersPage = () => {
           <Truck className="h-8 w-8 text-primary" />
           <h1 className="text-3xl font-bold">Suppliers Management</h1>
         </div>
-        <Button>
+        <Button onClick={openAddDialog}>
           <PlusCircle className="mr-2 h-4 w-4" /> Add New Supplier
         </Button>
       </div>
@@ -109,7 +169,7 @@ const SuppliersPage = () => {
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end space-x-2">
-                        <Button variant="ghost" size="sm">
+                        <Button variant="ghost" size="sm" onClick={() => openEditDialog(supplier)}>
                           <Edit className="h-4 w-4" />
                         </Button>
                         <Button 
@@ -134,6 +194,15 @@ const SuppliersPage = () => {
           )}
         </CardContent>
       </Card>
+
+      <SupplierDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        onSubmit={editingSupplier ? handleEditSupplier : handleAddSupplier}
+        title={editingSupplier ? "Edit Supplier" : "Add New Supplier"}
+        defaultValues={editingSupplier || undefined}
+        isLoading={isSubmitting}
+      />
     </div>
   );
 };

@@ -169,17 +169,18 @@ export const mockApi = {
     return [...mockSuppliers];
   },
 
-  async addSupplier(data: Omit<Supplier, 'id'>): Promise<Supplier> {
+  async addSupplier(data: Omit<Supplier, 'id' | 'lastOrderDate'>): Promise<Supplier> {
     await delay(300);
     const newSupplier: Supplier = {
       id: Date.now().toString(),
       ...data,
+      lastOrderDate: new Date(),
     };
     mockSuppliers.push(newSupplier);
     return newSupplier;
   },
 
-  async updateSupplier(id: string, data: Partial<Supplier>): Promise<Supplier> {
+  async updateSupplier(id: string, data: Partial<Omit<Supplier, 'id' | 'lastOrderDate'>>): Promise<Supplier> {
     await delay(300);
     const index = mockSuppliers.findIndex(s => s.id === id);
     if (index > -1) {
@@ -203,17 +204,18 @@ export const mockApi = {
     return [...mockEquipment];
   },
 
-  async addEquipment(data: Omit<EquipmentItem, 'id'>): Promise<EquipmentItem> {
+  async addEquipment(data: Omit<EquipmentItem, 'id' | 'purchaseDate' | 'lastMaintenanceDate'>): Promise<EquipmentItem> {
     await delay(300);
     const newEquipment: EquipmentItem = {
       id: Date.now().toString(),
       ...data,
+      purchaseDate: new Date(),
     };
     mockEquipment.push(newEquipment);
     return newEquipment;
   },
 
-  async updateEquipment(id: string, data: Partial<EquipmentItem>): Promise<EquipmentItem> {
+  async updateEquipment(id: string, data: Partial<Omit<EquipmentItem, 'id' | 'purchaseDate'>>): Promise<EquipmentItem> {
     await delay(300);
     const index = mockEquipment.findIndex(e => e.id === id);
     if (index > -1) {
