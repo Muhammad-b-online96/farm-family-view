@@ -1,6 +1,8 @@
 import { Transaction, Strain, Customer, ComplianceDoc, Supplier, EquipmentItem, Task, mockTransactions, mockStrains, mockCustomers, mockComplianceDocs, mockSuppliers, mockEquipment, mockTasks } from "@/data/mockData";
 import { TransactionFormData, StrainFormData } from "@/components/forms/schemas";
 import { CustomerFormData } from "@/components/forms/CustomerForm";
+import { SupplierFormData } from "@/components/forms/SupplierForm";
+import { EquipmentFormData } from "@/components/forms/EquipmentForm";
 
 // Simulate API delay
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -169,18 +171,23 @@ export const mockApi = {
     return [...mockSuppliers];
   },
 
-  async addSupplier(data: Omit<Supplier, 'id' | 'lastOrderDate'>): Promise<Supplier> {
+  async addSupplier(data: SupplierFormData): Promise<Supplier> {
     await delay(300);
     const newSupplier: Supplier = {
       id: Date.now().toString(),
-      ...data,
+      name: data.name || '',
+      contactPerson: data.contactPerson || '',
+      email: data.email || '',
+      phone: data.phone || '',
+      productCategory: data.productCategory || '',
+      rating: data.rating || 5,
       lastOrderDate: new Date(),
     };
     mockSuppliers.push(newSupplier);
     return newSupplier;
   },
 
-  async updateSupplier(id: string, data: Partial<Omit<Supplier, 'id' | 'lastOrderDate'>>): Promise<Supplier> {
+  async updateSupplier(id: string, data: Partial<SupplierFormData>): Promise<Supplier> {
     await delay(300);
     const index = mockSuppliers.findIndex(s => s.id === id);
     if (index > -1) {
@@ -204,18 +211,22 @@ export const mockApi = {
     return [...mockEquipment];
   },
 
-  async addEquipment(data: Omit<EquipmentItem, 'id' | 'purchaseDate' | 'lastMaintenanceDate'>): Promise<EquipmentItem> {
+  async addEquipment(data: EquipmentFormData): Promise<EquipmentItem> {
     await delay(300);
     const newEquipment: EquipmentItem = {
       id: Date.now().toString(),
-      ...data,
+      name: data.name || '',
+      type: data.type || '',
+      status: data.status || 'Operational',
+      location: data.location || '',
+      assignedTo: data.assignedTo || undefined,
       purchaseDate: new Date(),
     };
     mockEquipment.push(newEquipment);
     return newEquipment;
   },
 
-  async updateEquipment(id: string, data: Partial<Omit<EquipmentItem, 'id' | 'purchaseDate'>>): Promise<EquipmentItem> {
+  async updateEquipment(id: string, data: Partial<EquipmentFormData>): Promise<EquipmentItem> {
     await delay(300);
     const index = mockEquipment.findIndex(e => e.id === id);
     if (index > -1) {
