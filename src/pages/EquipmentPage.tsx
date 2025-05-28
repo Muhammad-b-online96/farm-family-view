@@ -1,45 +1,67 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { PlusCircle, Settings, Wrench } from 'lucide-react';
-
-type EquipmentStatus = 'Operational' | 'Maintenance' | 'Decommissioned' | 'Requires Repair';
-
-interface EquipmentItem {
-  id: string;
-  name: string;
-  type: string;
-  purchaseDate: string; // Should be Date
-  status: EquipmentStatus;
-  location: string;
-  assignedTo?: string;
-  lastMaintenanceDate?: string; // Should be Date
-}
-
-const mockEquipment: EquipmentItem[] = [
-  { id: 'eq1', name: 'Honey Extractor HXT-5000', type: 'Processing', purchaseDate: '2023-03-15', status: 'Operational', location: 'Honey House A', assignedTo: 'Honey Team', lastMaintenanceDate: '2025-03-01' },
-  { id: 'eq2', name: 'Cannabis Trimmer CT-Deluxe', type: 'Cultivation', purchaseDate: '2024-01-20', status: 'Maintenance', location: 'Weed Grow Room 3', lastMaintenanceDate: '2025-05-10' },
-  { id: 'eq3', name: 'Fish Tank System FTS-10', type: 'Aquaculture', purchaseDate: '2022-11-05', status: 'Operational', location: 'Fish Farm Tank Bay 1', assignedTo: 'Fish Team' },
-  { id: 'eq4', name: 'Mushroom Humidifier MH-Pro', type: 'Cultivation', purchaseDate: '2023-08-10', status: 'Requires Repair', location: 'Mushroom Grow Tent 2', assignedTo: 'Mushroom Team', lastMaintenanceDate: '2024-12-15' },
-  { id: 'eq5', name: 'Delivery Van DV-01', type: 'Logistics', purchaseDate: '2022-05-01', status: 'Operational', location: 'Garage', assignedTo: 'Logistics Dept', lastMaintenanceDate: '2025-04-20' },
-  { id: 'eq6', name: 'Industrial Scale IS-100kg', type: 'General Use', purchaseDate: '2024-02-01', status: 'Decommissioned', location: 'Storage Unit B' },
-];
-
-const getEquipmentStatusColor = (status: EquipmentStatus) => {
-  switch (status) {
-    case 'Operational': return 'bg-green-500';
-    case 'Maintenance': return 'bg-yellow-500';
-    case 'Requires Repair': return 'bg-orange-500';
-    case 'Decommissioned': return 'bg-gray-500';
-    default: return 'bg-slate-400';
-  }
-};
+import { PlusCircle, Settings, Wrench, Edit, Trash2 } from 'lucide-react';
+import { EquipmentItem, EquipmentStatus } from "@/data/mockData";
+import { mockApi } from "@/services/mockApi";
+import { useToast } from "@/hooks/use-toast";
 
 const EquipmentPage = () => {
-  const [equipment, setEquipment] = useState<EquipmentItem[]>(mockEquipment);
+  const [equipment, setEquipment] = useState<EquipmentItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    loadEquipment();
+  }, []);
+
+  const loadEquipment = async () => {
+    try {
+      setLoading(true);
+      const data = await mockApi.getEquipment();
+      setEquipment(data);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to load equipment",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteEquipment = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this equipment?')) return;
+    
+    try {
+      await mockApi.deleteEquipment(id);
+      toast({
+        title: "Success",
+        description: "Equipment deleted successfully",
+      });
+      loadEquipment();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete equipment",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const getEquipmentStatusColor = (status: EquipmentStatus) => {
+    switch (status) {
+      case 'Operational': return 'bg-green-500';
+      case 'Maintenance': return 'bg-yellow-500';
+      case 'Requires Repair': return 'bg-orange-500';
+      case 'Decommissioned': return 'bg-gray-500';
+      default: return 'bg-slate-400';
+    }
+  };
 
   return (
     <div className="container mx-auto py-8 px-4 md:px-0 space-y-8">
@@ -59,7 +81,11 @@ const EquipmentPage = () => {
           <CardDescription>Track and manage all your business equipment and assets.</CardDescription>
         </CardHeader>
         <CardContent>
-          {equipment.length > 0 ? (
+          {loading ? (
+            <div className="text-center py-10">
+              <p className="text-muted-foreground">Loading equipment...</p>
+            </div>
+          ) : equipment.length > 0 ? (
             <Table>
               <TableHeader>
                 <TableRow>
@@ -80,11 +106,22 @@ const EquipmentPage = () => {
                     <TableCell>
                       <Badge className={`${getEquipmentStatusColor(item.status)} text-white`}>{item.status}</Badge>
                     </TableCell>
-                    <TableCell>{new Date(item.purchaseDate).toLocaleDateString()}</TableCell>
+                    <TableCell>{item.purchaseDate.toLocaleDateString()}</TableCell>
                     <TableCell>{item.location}</TableCell>
-                    <TableCell>{item.lastMaintenanceDate ? new Date(item.lastMaintenanceDate).toLocaleDateString() : 'N/A'}</TableCell>
+                    <TableCell>{item.lastMaintenanceDate ? item.lastMaintenanceDate.toLocaleDateString() : 'N/A'}</TableCell>
                     <TableCell className="text-right">
-                      <Button variant="ghost" size="sm">Details</Button>
+                      <div className="flex justify-end space-x-2">
+                        <Button variant="ghost" size="sm">
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={() => handleDeleteEquipment(item.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}

@@ -4,14 +4,20 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { PlusCircle, Users, Phone, Mail, DollarSign } from 'lucide-react';
+import { PlusCircle, Users, Phone, Mail, DollarSign, Edit, Trash2 } from 'lucide-react';
 import { Customer } from "@/data/mockData";
 import { mockApi } from "@/services/mockApi";
 import { useToast } from "@/hooks/use-toast";
+import { CustomerDialog } from "@/components/dialogs/CustomerDialog";
+import { CustomerFormData } from "@/components/forms/CustomerForm";
 
 const CustomersPage = () => {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
+  const [actionLoading, setActionLoading] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -34,6 +40,75 @@ const CustomersPage = () => {
     }
   };
 
+  const handleAddCustomer = async (data: CustomerFormData) => {
+    try {
+      setActionLoading(true);
+      await mockApi.addCustomer(data);
+      toast({
+        title: "Success",
+        description: "Customer added successfully",
+      });
+      setIsAddDialogOpen(false);
+      loadCustomers();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to add customer",
+        variant: "destructive",
+      });
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleEditCustomer = async (data: CustomerFormData) => {
+    if (!editingCustomer) return;
+    
+    try {
+      setActionLoading(true);
+      await mockApi.updateCustomer(editingCustomer.id, data);
+      toast({
+        title: "Success",
+        description: "Customer updated successfully",
+      });
+      setIsEditDialogOpen(false);
+      setEditingCustomer(null);
+      loadCustomers();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update customer",
+        variant: "destructive",
+      });
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleDeleteCustomer = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this customer?')) return;
+    
+    try {
+      await mockApi.deleteCustomer(id);
+      toast({
+        title: "Success",
+        description: "Customer deleted successfully",
+      });
+      loadCustomers();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete customer",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const openEditDialog = (customer: Customer) => {
+    setEditingCustomer(customer);
+    setIsEditDialogOpen(true);
+  };
+
   const getStatusColor = (status: Customer['status']) => {
     return status === 'Active' ? 'bg-green-500' : 'bg-gray-500';
   };
@@ -52,7 +127,7 @@ const CustomersPage = () => {
           <Users className="h-8 w-8 text-primary" />
           <h1 className="text-3xl font-bold">Customer Management</h1>
         </div>
-        <Button>
+        <Button onClick={() => setIsAddDialogOpen(true)}>
           <PlusCircle className="mr-2 h-4 w-4" /> Add New Customer
         </Button>
       </div>
@@ -148,7 +223,22 @@ const CustomersPage = () => {
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right">
-                      <Button variant="ghost" size="sm">View Details</Button>
+                      <div className="flex justify-end space-x-2">
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={() => openEditDialog(customer)}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={() => handleDeleteCustomer(customer.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -163,6 +253,23 @@ const CustomersPage = () => {
           )}
         </CardContent>
       </Card>
+
+      <CustomerDialog
+        open={isAddDialogOpen}
+        onOpenChange={setIsAddDialogOpen}
+        onSubmit={handleAddCustomer}
+        title="Add New Customer"
+        isLoading={actionLoading}
+      />
+
+      <CustomerDialog
+        open={isEditDialogOpen}
+        onOpenChange={setIsEditDialogOpen}
+        onSubmit={handleEditCustomer}
+        title="Edit Customer"
+        defaultValues={editingCustomer || undefined}
+        isLoading={actionLoading}
+      />
     </div>
   );
 };

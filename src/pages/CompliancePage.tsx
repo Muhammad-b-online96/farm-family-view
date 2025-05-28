@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { PlusCircle, ShieldCheck, AlertTriangle, CheckCircle, Clock, FileText } from 'lucide-react';
+import { PlusCircle, ShieldCheck, AlertTriangle, CheckCircle, Clock, FileText, Edit, Trash2 } from 'lucide-react';
 import { ComplianceDoc } from "@/data/mockData";
 import { mockApi } from "@/services/mockApi";
 import { useToast } from "@/hooks/use-toast";
@@ -31,6 +31,25 @@ const CompliancePage = () => {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDeleteDoc = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this compliance document?')) return;
+    
+    try {
+      await mockApi.deleteComplianceDoc(id);
+      toast({
+        title: "Success",
+        description: "Compliance document deleted successfully",
+      });
+      loadComplianceDocs();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete compliance document",
+        variant: "destructive",
+      });
     }
   };
 
@@ -164,7 +183,18 @@ const CompliancePage = () => {
                         </span>
                       </TableCell>
                       <TableCell className="text-right">
-                        <Button variant="ghost" size="sm">View Details</Button>
+                        <div className="flex justify-end space-x-2">
+                          <Button variant="ghost" size="sm">
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button 
+                            variant="ghost" 
+                            size="sm"
+                            onClick={() => handleDeleteDoc(doc.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   );
