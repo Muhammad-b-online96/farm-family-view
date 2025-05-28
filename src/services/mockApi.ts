@@ -1,6 +1,6 @@
-
 import { Transaction, Strain, Customer, ComplianceDoc, Supplier, EquipmentItem, Task, mockTransactions, mockStrains, mockCustomers, mockComplianceDocs, mockSuppliers, mockEquipment, mockTasks } from "@/data/mockData";
 import { TransactionFormData, StrainFormData } from "@/components/forms/schemas";
+import { CustomerFormData } from "@/components/forms/CustomerForm";
 
 // Simulate API delay
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -93,21 +93,23 @@ export const mockApi = {
     return [...mockCustomers];
   },
 
-  async addCustomer(data: Omit<Customer, 'id' | 'totalOrders' | 'totalSpent' | 'lastOrderDate' | 'status'>): Promise<Customer> {
+  async addCustomer(data: CustomerFormData): Promise<Customer> {
     await delay(300);
     const newCustomer: Customer = {
       id: Date.now().toString(),
-      ...data,
+      name: data.name || '',
+      email: data.email || '',
+      phone: data.phone || '',
+      status: data.status || 'Active',
       totalOrders: 0,
       totalSpent: 0,
       lastOrderDate: new Date(),
-      status: "Active",
     };
     mockCustomers.push(newCustomer);
     return newCustomer;
   },
 
-  async updateCustomer(id: string, data: Partial<Customer>): Promise<Customer> {
+  async updateCustomer(id: string, data: Partial<CustomerFormData>): Promise<Customer> {
     await delay(300);
     const index = mockCustomers.findIndex(c => c.id === id);
     if (index > -1) {
